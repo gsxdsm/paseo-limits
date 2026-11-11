@@ -37,7 +37,7 @@ paseo plugin install "$PWD"
 - **Placement.** Paseo plugins can't add to the composer's bottom row, so the pill lives in the track bar above the composer next to Tasks and Subagents.
 - **Codex window naming.** Paseo reports Codex's primary window as "Session" without its duration. The plugin classifies it by reset time: anything resetting more than six hours out is labeled weekly. Accounts whose API returns only one window show a single value.
 - **Providers.** Only providers Paseo's quota fetcher supports report usage: Claude, Codex, Grok, and GLM at the time of writing. Other providers show "No limits".
-- **Logos.** Claude and OpenAI marks are bundled. Other providers get a small two-bar meter instead.
+- **Logos.** Claude, OpenAI, and Grok marks are bundled. Other providers get a small two-bar meter instead.
 
 ## Development
 
