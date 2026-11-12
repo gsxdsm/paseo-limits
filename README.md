@@ -14,7 +14,7 @@ The pill follows the agent's provider. A Claude agent shows Claude limits, a Cod
 paseo plugin add ortschun/paseo-limits
 ```
 
-Plugins must be enabled on the daemon (**Settings → Plugins → Enable plugins**). Requires Paseo 0.8 or later.
+Plugins must be enabled on the daemon (**Settings → Plugins → Enable plugins**). Requires Paseo 0.16 or later.
 
 To install from a local checkout instead:
 

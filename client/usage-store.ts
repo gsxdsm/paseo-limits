@@ -162,6 +162,8 @@ export function worstTone(tones: UsageTone[]): UsageTone {
 }
 
 const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+const FIVE_HOURS_MS = 5 * 60 * 60 * 1000;
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * "5h" or "wk". Claude names its windows explicitly. Codex calls its primary window "Session"
@@ -185,6 +187,34 @@ export function shortWindowLabel(win: UsageWindow, now = Date.now()): string {
 export function displayWindowLabel(win: UsageWindow): string {
   if (!/session|primary|secondary/i.test(`${win.id} ${win.label}`)) return win.label;
   return shortWindowLabel(win) === "wk" ? "Weekly" : "5-hour";
+}
+
+export type UsagePacing = {
+  elapsedPct: number;
+  usedPct: number;
+  deltaPct: number;
+  status: "ahead" | "on-pace" | "behind";
+};
+
+/**
+ * Compare actual consumption with the portion of a known 5-hour or weekly window that has
+ * elapsed. Paseo reports the reset instant but not the start, so windows without a reliable
+ * duration intentionally return null instead of presenting a made-up pace.
+ */
+export function usagePacing(win: UsageWindow, now = Date.now()): UsagePacing | null {
+  const usedPct = usedPercent(win);
+  const resetAt = win.resetsAt ? new Date(win.resetsAt).getTime() : Number.NaN;
+  const duration = shortWindowLabel(win, now) === "5h" ? FIVE_HOURS_MS : shortWindowLabel(win, now) === "wk" ? WEEK_MS : null;
+  if (usedPct === null || duration === null || Number.isNaN(resetAt)) return null;
+
+  const elapsedPct = Math.round(Math.max(0, Math.min(100, ((now - (resetAt - duration)) / duration) * 100)));
+  const deltaPct = usedPct - elapsedPct;
+  return {
+    elapsedPct,
+    usedPct,
+    deltaPct,
+    status: deltaPct > 5 ? "ahead" : deltaPct < -5 ? "behind" : "on-pace",
+  };
 }
 
 /** The two windows the pill shows: the session win first, then the weekly one. */
